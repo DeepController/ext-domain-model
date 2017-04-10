@@ -8,7 +8,25 @@
 
 import Foundation
 
-//print("Hello, World!")
+////////////////////////////////////
+// Protocol
+//
+
+protocol CustomStringConvertible {
+	var description : String { get }
+}
+
+protocol Mathematics {
+	static func +(left : Self, right : Self) -> Self
+	static func -(left : Self, right : Self) -> Self
+}
+
+extension Double {
+	var USD: Money { return Money(amount: Int(self), currency: Money.CurrencyType.USD) }
+	var EUR: Money { return Money(amount: Int(self), currency: Money.CurrencyType.EUR) }
+	var GBP: Money { return Money(amount: Int(self), currency: Money.CurrencyType.GBP) }
+	var YEN: Money { return Money(amount: Int(self), currency: Money.CurrencyType.YEN) }
+}
 
 public func testMe() -> String {
 	return "I have been tested"
@@ -23,15 +41,17 @@ open class TestMe {
 ////////////////////////////////////
 // Money
 //
-public struct Money {
+public struct Money : CustomStringConvertible, Mathematics {
 	public var amount : Int
 	public var currency : CurrencyType
+	internal var description: String { get {return "\(currency)\(amount).00"}}
 	
 	public enum CurrencyType {
 		case USD
 		case GBP
 		case EUR
 		case CAN
+		case YEN
 	}
 	
 	public func convert(_ to: CurrencyType) -> Money {
@@ -61,6 +81,8 @@ public struct Money {
 			return temp
 		case .USD:
 			return temp
+		default:
+			return temp
 		}
 	}
 	
@@ -73,15 +95,24 @@ public struct Money {
 		let temp = self.convert(self.currency)
 		return Money(amount: from.amount - temp.amount, currency: from.currency)
 	}
+	
+	static func +(left : Money, right : Money) -> Money {
+		return left.add(right)
+	}
+	
+	static func -(left : Money, right : Money) -> Money {
+		return left.add(right)
+	}
 }
 
 //////////////////////////////////
 // Job
 //
 
-open class Job {
+open class Job : CustomStringConvertible {
 	fileprivate var title : String
 	fileprivate var type : JobType
+	internal var description: String { get {return "a \(type) with title \(title)"}}
 	
 	public enum JobType {
 		case Hourly(Double)
@@ -126,10 +157,11 @@ open class Job {
 ////////////////////////////////////
 // Person
 //
-open class Person {
+open class Person : CustomStringConvertible {
 	open var firstName : String = ""
 	open var lastName : String = ""
 	open var age : Int = 0
+	internal var description: String {get {return "\(firstName)\(lastName) aged \(age)"}}
 	
 	fileprivate var _job : Job? = nil
 	open var job : Job? {
@@ -169,8 +201,18 @@ open class Person {
 ////////////////////////////////////
 // Family
 //
-open class Family {
+open class Family : CustomStringConvertible{
 	fileprivate var members : [Person] = []
+	
+	internal var description: String {
+		get {
+			var str = ""
+			for p in members {
+				str += p.description + ", "
+			}
+			return "A family with members: \(str)"
+		}
+	}
 	
 	public init(spouse1: Person, spouse2: Person) {
 		guard spouse1.spouse == nil && spouse2.spouse == nil else {
@@ -200,6 +242,29 @@ open class Family {
 		return sum
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
