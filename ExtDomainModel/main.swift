@@ -12,6 +12,7 @@ import Foundation
 // Protocol
 //
 
+
 protocol CustomStringConvertible {
 	var description : String { get }
 }
@@ -25,7 +26,7 @@ extension Double {
 	var USD: Money { return Money(amount: Int(self), currency: Money.CurrencyType.USD) }
 	var EUR: Money { return Money(amount: Int(self), currency: Money.CurrencyType.EUR) }
 	var GBP: Money { return Money(amount: Int(self), currency: Money.CurrencyType.GBP) }
-	var YEN: Money { return Money(amount: Int(self), currency: Money.CurrencyType.YEN) }
+	var CAN: Money { return Money(amount: Int(self), currency: Money.CurrencyType.CAN) }
 }
 
 public func testMe() -> String {
@@ -44,14 +45,13 @@ open class TestMe {
 public struct Money : CustomStringConvertible, Mathematics {
 	public var amount : Int
 	public var currency : CurrencyType
-	internal var description: String { get {return "\(currency)\(amount).00"}}
+	internal var description: String { get {return "\(currency)\(amount).0"}}
 	
-	public enum CurrencyType {
-		case USD
-		case GBP
-		case EUR
-		case CAN
-		case YEN
+	public enum CurrencyType : String{
+		case USD = "USD"
+		case GBP = "GBP"
+		case EUR = "EUR"
+		case CAN = "CAN"
 	}
 	
 	public func convert(_ to: CurrencyType) -> Money {
@@ -81,8 +81,6 @@ public struct Money : CustomStringConvertible, Mathematics {
 			return temp
 		case .USD:
 			return temp
-		default:
-			return temp
 		}
 	}
 	
@@ -92,7 +90,7 @@ public struct Money : CustomStringConvertible, Mathematics {
 	}
 	
 	public func subtract(_ from: Money) -> Money {
-		let temp = self.convert(self.currency)
+		let temp = self.convert(from.currency)
 		return Money(amount: from.amount - temp.amount, currency: from.currency)
 	}
 	
@@ -101,7 +99,7 @@ public struct Money : CustomStringConvertible, Mathematics {
 	}
 	
 	static func -(left : Money, right : Money) -> Money {
-		return left.subtract(right)
+		return right.subtract(left)
 	}
 }
 
@@ -112,7 +110,7 @@ public struct Money : CustomStringConvertible, Mathematics {
 open class Job : CustomStringConvertible {
 	fileprivate var title : String
 	fileprivate var type : JobType
-	internal var description: String { get {return "a \(type) with title \(title)"}}
+	internal var description: String { get {return "a \(title) with salary \(type.get())"}}
 	
 	public enum JobType {
 		case Hourly(Double)
@@ -161,7 +159,7 @@ open class Person : CustomStringConvertible {
 	open var firstName : String = ""
 	open var lastName : String = ""
 	open var age : Int = 0
-	internal var description: String {get {return "\(firstName)\(lastName) aged \(age)"}}
+	internal var description: String {get {return "\(firstName) \(lastName) aged \(age)"}}
 	
 	fileprivate var _job : Job? = nil
 	open var job : Job? {
@@ -207,8 +205,13 @@ open class Family : CustomStringConvertible{
 	internal var description: String {
 		get {
 			var str = ""
-			for p in members {
-				str += p.description + ", "
+			if members.count > 0 {
+				str += members[0].description
+			}
+			if members.count > 1 {
+				for index in 1...members.count - 1 {
+					str += ", " + members[index].description
+				}
 			}
 			return "A family with members: \(str)"
 		}
@@ -242,11 +245,6 @@ open class Family : CustomStringConvertible{
 		return sum
 	}
 }
-
-
-
-
-
 
 
 
