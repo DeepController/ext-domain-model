@@ -2,8 +2,8 @@
 //  main.swift
 //  SimpleDomainModel
 //
-//  Created by Yang Wang on 4/10/16.
-//  Copyright © 2016 Yang Wang. All rights reserved.
+//  Created by Yang Wang on 4/10/17.
+//  Copyright © 2017 Yang Wang. All rights reserved.
 //
 
 import Foundation
@@ -101,7 +101,7 @@ public struct Money : CustomStringConvertible, Mathematics {
 	}
 	
 	static func -(left : Money, right : Money) -> Money {
-		return left.add(right)
+		return left.subtract(right)
 	}
 }
 
