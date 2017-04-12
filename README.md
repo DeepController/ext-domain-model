@@ -1,3 +1,3 @@
 # Domain Modeling Part 2
 
-TODO
+Added Protocol and Extension to the original Domain Model.
